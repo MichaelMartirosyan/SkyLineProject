@@ -3,6 +3,8 @@ package com.skyline.skylineproject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skyline.skylineproject.api.Request;
+
+import com.skyline.skylineproject.entity.Billionaires;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +15,11 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -27,6 +33,9 @@ class SkyLineProjectApplicationTests {
 
 	@LocalServerPort
 	private int port;
+
+	@Autowired
+	JdbcTemplate jdbcTemplate;
 
 	@Test
 	void contextLoads() {
@@ -49,5 +58,13 @@ class SkyLineProjectApplicationTests {
 		request.setTableName("tableName");
 		objectMapper.writeValueAsString(request);
 	}
+
+	@Test
+	public void h2Test(){
+		List<Billionaires> query = jdbcTemplate.query("select * from billionaires", new BeanPropertyRowMapper<>(Billionaires.class));
+		assertEquals(query.size(), 3); //TODO add normal assertions to check data
+	}
+
+
 
 }
